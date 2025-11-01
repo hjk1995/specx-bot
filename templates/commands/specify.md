@@ -64,7 +64,19 @@ Given that feature description, do this:
 
 3. Load `templates/spec-template.md` to understand required sections.
 
-4. Follow this execution flow:
+4. **Load Persona Configuration** (if available):
+   - Check if `.specify/config.json` exists
+   - If exists, read the `personas.enabled` list
+   - Load persona definitions from `memory/personas/` for enabled personas
+   - Identify which personas contribute to the `specify` phase:
+     - **Business Analyst (BA)**: User scenarios, functional requirements, acceptance criteria
+     - **Solution Architect (SA)**: Technical feasibility, system constraints
+     - **Security Engineer**: Security and compliance requirements
+     - **UX Designer**: User experience and accessibility requirements
+     - **Quality Assurance (QA)**: Test scenarios and quality criteria
+   - If no persona configuration exists, proceed with standard single-agent workflow
+
+5. Follow this execution flow:
 
     1. Parse user description from Input
        If empty: ERROR "No feature description provided"
@@ -90,9 +102,61 @@ Given that feature description, do this:
     7. Identify Key Entities (if data involved)
     8. Return: SUCCESS (spec ready for planning)
 
-5. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
+5. **Orchestrate Persona Contributions** (if personas enabled):
+   
+   If personas are enabled, coordinate their contributions in parallel where possible:
+   
+   a. **Business Analyst (BA)** - Primary contributor:
+      - Analyze feature description and extract user needs
+      - Create comprehensive user stories and scenarios
+      - Define functional requirements with clear acceptance criteria
+      - Establish measurable success criteria
+      - Document assumptions and constraints
+      - Ensure all requirements are testable and unambiguous
+   
+   b. **Solution Architect (SA)** - Technical validation:
+      - Review requirements for technical feasibility
+      - Identify system constraints and integration points
+      - Flag any requirements that may need technical clarification
+      - Suggest alternative approaches for complex requirements
+      - Validate that requirements are achievable with reasonable effort
+   
+   c. **Security Engineer** (if enabled):
+      - Identify sensitive data and security requirements
+      - Define authentication and authorization needs
+      - Document compliance requirements (GDPR, HIPAA, etc.)
+      - Perform threat modeling for the feature
+      - Specify audit and logging requirements
+   
+   d. **UX Designer** (if enabled):
+      - Define user experience requirements
+      - Specify accessibility standards (WCAG 2.1 AA)
+      - Establish usability goals and metrics
+      - Document interaction patterns and user flows
+      - Identify potential UX challenges
+   
+   e. **Quality Assurance (QA)** (if enabled):
+      - Create comprehensive test scenarios
+      - Define quality criteria and acceptance tests
+      - Identify edge cases and error conditions
+      - Specify test coverage requirements
+      - Document validation checkpoints
+   
+   **Orchestration Pattern**:
+   - BA creates the initial draft of user stories and requirements
+   - SA, Security, UX, and QA review and contribute their specialized sections in parallel
+   - Integrate all contributions into a cohesive specification
+   - Resolve any conflicts between persona recommendations (BA has priority for requirements, SA for feasibility)
+   - Ensure consistency across all sections
+   
+   **Attribution**: Add subtle attribution markers for persona contributions:
+   ```markdown
+   <!-- Contributed by: BA, SA -->
+   ```
 
-6. **Specification Quality Validation**: After writing the initial spec, validate it against quality criteria:
+6. Write the specification to SPEC_FILE using the template structure, replacing placeholders with concrete details derived from the feature description (arguments) while preserving section order and headings.
+
+7. **Specification Quality Validation**: After writing the initial spec, validate it against quality criteria:
 
    a. **Create Spec Quality Checklist**: Generate a checklist file at `FEATURE_DIR/checklists/requirements.md` using the checklist template structure with these validation items:
 
@@ -184,7 +248,7 @@ Given that feature description, do this:
 
    d. **Update Checklist**: After each validation iteration, update the checklist file with current pass/fail status
 
-7. Report completion with branch name, spec file path, checklist results, and readiness for the next phase (`/speckit.clarify` or `/speckit.plan`).
+8. Report completion with branch name, spec file path, checklist results, persona contributions (if applicable), and readiness for the next phase (`/speckit.clarify` or `/speckit.plan`).
 
 **NOTE:** The script creates and checks out the new branch and initializes the spec file before writing.
 

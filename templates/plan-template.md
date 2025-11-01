@@ -5,11 +5,18 @@
 
 **Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/commands/plan.md` for the execution workflow.
 
+<!-- Persona Contributions: This plan may include contributions from role personas -->
+<!-- Lead Architect: SA (Solution Architect) -->
+<!-- Implementation Strategy: TL (Tech Lead) -->
+<!-- Supporting Contributors: DevOps, Security, UX, FE, BE (if enabled) -->
+
 ## Summary
 
 [Extract from feature spec: primary requirement + technical approach from research]
 
 ## Technical Context
+
+<!-- Contributed by: SA (Solution Architect), TL (Tech Lead) -->
 
 <!--
   ACTION REQUIRED: Replace the content in this section with the technical details

@@ -379,16 +379,324 @@ Different agents use different argument placeholders:
 5. **Directory naming**: Follow agent-specific conventions exactly (check existing agents for patterns).
 6. **Help text inconsistency**: Update all user-facing text consistently (help strings, docstrings, README, error messages).
 
+## Role Personas System
+
+### Overview
+
+The Role Personas system is a major feature that brings specialized AI agent profiles to the Spec-Driven Development workflow. Personas act as virtual team members, each contributing domain-specific expertise at appropriate phases of development.
+
+### Architecture
+
+**Components**:
+
+1. **Persona Definitions**: Markdown files with YAML frontmatter in `templates/personas/`
+2. **Persona Configuration**: JSON configuration in `.specify/config.json`
+3. **Multi-Select UI**: Interactive persona selection during `specify init`
+4. **Orchestration**: Main AI agent coordinates multiple persona sub-agents
+
+**File Structure**:
+
+```text
+templates/
+  personas/
+    business-analyst.md
+    solution-architect.md
+    tech-lead.md
+    quality-assurance.md
+    devops.md
+    security.md
+    ux.md
+    frontend-developer.md
+    backend-developer.md
+
+memory/
+  personas/
+    README.md              # Persona system documentation
+    [copied persona files] # Selected personas copied here during init
+
+.specify/
+  config.json             # Persona configuration
+```
+
+### Persona Definition Format
+
+Each persona is defined in a Markdown file with YAML frontmatter:
+
+```markdown
+---
+id: persona-id
+name: Full Persona Name
+short_name: Abbreviation
+role: Brief role description
+contributes_to:
+  - specify
+  - plan
+  - tasks
+  - implement
+  - clarify
+  - analyze
+  - checklist
+  - constitution
+phases:
+  specify: ["section1", "section2"]
+  plan: ["section1", "section2"]
+  clarify: ["section1", "section2"]
+  analyze: ["section1", "section2"]
+  checklist: ["section1", "section2"]
+  constitution: ["section1", "section2"]
+---
+
+# Persona Name
+
+## Role Description
+[Detailed description]
+
+## Core Responsibilities
+[Phase-specific responsibilities]
+
+## Contribution Guidelines
+[What to focus on and avoid]
+
+## Quality Checklist
+[Validation items]
+
+[Additional domain-specific sections]
+```
+
+### Configuration Schema
+
+The `.specify/config.json` file stores persona settings:
+
+```json
+{
+  "version": "1.0",
+  "personas": {
+    "enabled": ["business-analyst", "solution-architect", "tech-lead"],
+    "available": ["business-analyst", "solution-architect", "tech-lead", "quality-assurance", "devops", "security", "ux", "frontend-developer", "backend-developer"]
+  },
+  "orchestration": {
+    "parallel_execution": true,
+    "max_concurrent_personas": 3
+  }
+}
+```
+
+### Available Personas
+
+| Persona ID | Name | Short Name | Default | Focus |
+|------------|------|------------|---------|-------|
+| `business-analyst` | Business Analyst | BA | ✅ | Requirements, user stories, acceptance criteria |
+| `solution-architect` | Solution Architect | SA | ✅ | Technical architecture, system design, integration |
+| `tech-lead` | Tech Lead | TL | ✅ | Implementation strategy, code organization, best practices |
+| `quality-assurance` | Quality Assurance | QA | ❌ | Test strategies, quality gates, validation |
+| `devops` | DevOps Engineer | DevOps | ❌ | Infrastructure, deployment, CI/CD, monitoring |
+| `security` | Security Engineer | Security | ❌ | Security requirements, threat modeling, compliance |
+| `ux` | UX Designer | UX | ❌ | User experience, accessibility, usability |
+| `frontend-developer` | Frontend Developer | FE | ❌ | UI implementation, component design, state management |
+| `backend-developer` | Backend Developer | BE | ❌ | API design, database design, business logic |
+
+### Integration with Spec Commands
+
+Personas contribute at different phases:
+
+**`/speckit.specify`**:
+- BA: User stories, functional requirements, acceptance criteria
+- SA: Technical feasibility, system constraints
+- Security: Security and compliance requirements
+- UX: User experience and accessibility requirements
+- QA: Test scenarios and quality criteria
+
+**`/speckit.plan`**:
+- SA: Architecture, technology stack, data models, API contracts
+- TL: Implementation strategy, code organization, development workflow
+- DevOps: Infrastructure, deployment strategy, monitoring
+- Security: Security architecture, authentication/authorization
+- UX: Interaction design, UI patterns, responsive design
+- FE: Frontend architecture, component design, state management
+- BE: Backend architecture, API design, database schema
+
+**`/speckit.tasks`**:
+- TL: Task breakdown, dependency management, estimation
+- QA: Testing tasks, validation checkpoints
+- FE: UI implementation tasks
+- BE: API and database tasks
+- DevOps: Infrastructure and CI/CD tasks
+
+**`/speckit.implement`**:
+- TL: Code review, best practices enforcement, quality gates
+- QA: Test execution, quality validation, defect identification
+- DevOps: Deployment validation, monitoring setup, operational readiness
+- Security: Security validation, vulnerability assessment, penetration testing
+- UX: UX validation, accessibility testing, usability testing
+- FE: UI implementation, frontend validation, cross-browser testing
+- BE: API implementation, backend validation, performance optimization
+
+**`/speckit.clarify`**:
+- BA: Functional requirements clarification, user story ambiguity resolution, acceptance criteria refinement
+- SA: Technical feasibility clarification, architecture constraint validation, integration point clarification
+- TL: Implementation approach clarification, technical constraint validation, best practices alignment
+- QA: Test scenario clarification, edge case identification, quality criteria refinement
+- DevOps: Infrastructure requirement clarification, deployment constraint validation, operational readiness
+- Security: Security requirement clarification, threat model validation, compliance constraint identification
+- UX: User experience clarification, accessibility requirement refinement, usability criteria validation
+- FE: Frontend requirement clarification, UI specification refinement, component design validation
+- BE: Backend requirement clarification, API specification refinement, data model validation
+
+**`/speckit.analyze`**:
+- BA: Requirements completeness, user story coverage, acceptance criteria validation
+- SA: Architecture consistency, technical feasibility validation, integration point verification
+- TL: Implementation task coverage, code organization alignment, best practices adherence
+- QA: Test coverage validation, quality gate verification, edge case identification
+- DevOps: Infrastructure task coverage, deployment readiness, operational considerations
+- Security: Security requirement coverage, threat model validation, compliance verification
+- UX: User experience requirement coverage, accessibility validation, usability criteria
+- FE: Frontend task coverage, UI requirement completeness, component consistency
+- BE: Backend task coverage, API requirement completeness, data model consistency
+
+**`/speckit.checklist`**:
+- BA: Requirements quality validation, acceptance criteria completeness
+- SA: Architecture requirement clarity, technical constraint validation
+- TL: Implementation requirement completeness, best practices validation
+- QA: Test scenario coverage, quality criteria validation, edge case identification
+- DevOps: Infrastructure requirement completeness, deployment criteria validation
+- Security: Security requirement coverage, compliance validation, threat model completeness
+- UX: User experience requirement quality, accessibility criteria validation, usability completeness
+- FE: Frontend requirement clarity, UI specification completeness
+- BE: Backend requirement clarity, API specification completeness
+
+**`/speckit.constitution`**:
+- BA: Requirements governance principles, acceptance criteria standards, user story quality guidelines
+- SA: Architecture governance principles, technical standards, integration guidelines
+- TL: Code quality principles, best practices standards, implementation guidelines
+- QA: Testing standards, quality gate principles, validation guidelines
+- DevOps: Infrastructure governance, deployment standards, operational principles
+- Security: Security governance principles, compliance standards, threat modeling guidelines
+- UX: User experience principles, accessibility standards, usability guidelines
+- FE: Frontend standards, UI consistency principles, component guidelines
+- BE: Backend standards, API governance principles, data integrity guidelines
+
+### Implementation in `__init__.py`
+
+**Key Components**:
+
+1. **PERSONA_CONFIG Dictionary**: Defines all available personas with metadata
+   ```python
+   PERSONA_CONFIG = {
+       "business-analyst": {
+           "name": "Business Analyst (BA)",
+           "description": "Requirements gathering, user stories, acceptance criteria",
+           "default": True,
+       },
+       # ... other personas
+   }
+   ```
+
+2. **multi_select_with_arrows()**: Interactive multi-select UI function
+   - Arrow keys to navigate
+   - Space bar to toggle selection
+   - Enter to confirm
+   - Shows selected count in real-time
+
+3. **create_persona_config()**: Creates `.specify/config.json`
+   - Stores enabled personas
+   - Sets orchestration configuration
+   - Maintains available personas list
+
+4. **copy_persona_files()**: Copies persona definitions to project
+   - Copies selected persona `.md` files
+   - Copies `README.md` for documentation
+   - Creates `memory/personas/` directory
+
+5. **Integration in init() command**:
+   - Persona selection after script type selection
+   - Tracker step for persona setup
+   - Error handling for persona configuration
+
+### Sub-Agent Orchestration
+
+The persona system enables sub-agent orchestration where the main AI agent acts as a coordinator:
+
+**Orchestration Pattern**:
+1. Main agent reads persona definitions from `memory/personas/`
+2. Main agent reads persona configuration from `.specify/config.json`
+3. For each command phase, main agent identifies relevant personas
+4. Main agent invokes personas as sub-agents with appropriate context
+5. Personas contribute their specialized sections in parallel
+6. Main agent merges contributions into cohesive artifacts
+7. Main agent resolves any conflicts between persona recommendations
+
+**Parallel Execution**:
+- Independent personas can work simultaneously
+- Configurable concurrency limit (default: 3)
+- Dependency-aware sequencing (e.g., BA before SA, SA before TL)
+- Progress tracking for multi-persona execution
+- Graceful handling of partial failures
+
+### Customization
+
+Users can customize personas in several ways:
+
+1. **Edit Existing Personas**: Modify files in `memory/personas/` to add project-specific guidelines
+2. **Create Custom Personas**: Add new persona definition files following the standard format
+3. **Disable Personas**: Update `.specify/config.json` to change enabled personas
+4. **Adjust Orchestration**: Configure parallel execution and concurrency limits
+
+### Backward Compatibility
+
+The persona system is designed to be fully backward compatible:
+
+- Persona system is opt-in during `specify init`
+- Existing projects without personas continue to work normally
+- Commands gracefully handle missing persona configurations
+- Default behavior (no personas) matches pre-persona functionality
+
+### Testing Persona Integration
+
+When testing the persona system:
+
+1. **Selection UI**: Test multi-select interface with various selections
+2. **File Copying**: Verify correct persona files are copied
+3. **Configuration**: Check `.specify/config.json` is created correctly
+4. **Command Integration**: Test persona contributions in each command phase
+5. **Orchestration**: Verify parallel execution and conflict resolution
+6. **Customization**: Test editing and adding custom personas
+7. **Backward Compatibility**: Ensure existing projects work without personas
+
+### Best Practices
+
+**For Users**:
+- Start with core trio (BA, SA, TL) for most projects
+- Add specialized personas as needed (QA, DevOps, Security)
+- Customize personas for project-specific requirements
+- Review and adjust orchestration settings based on project complexity
+
+**For Contributors**:
+- Follow the standard persona definition format
+- Ensure persona contributions are phase-appropriate
+- Document persona expertise and guidelines clearly
+- Test persona integration with multiple AI agents
+- Maintain backward compatibility
+
 ## Future Considerations
 
 When adding new agents:
 
 - Consider the agent's native command/workflow patterns
 - Ensure compatibility with the Spec-Driven Development process
+- Ensure compatibility with the Role Personas system
 - Document any special requirements or limitations
 - Update this guide with lessons learned
 - Verify the actual CLI tool name before adding to AGENT_CONFIG
 
+When adding new personas:
+
+- Follow the standard persona definition format
+- Ensure persona contributes at appropriate phases
+- Document persona expertise and quality checklists
+- Test persona with multiple AI agents
+- Update PERSONA_CONFIG in `__init__.py`
+- Update documentation in README.md and memory/personas/README.md
+
 ---
 
-*This documentation should be updated whenever new agents are added to maintain accuracy and completeness.*
+*This documentation should be updated whenever new agents or personas are added to maintain accuracy and completeness.*

@@ -7,6 +7,46 @@ All notable changes to the Specify CLI and templates are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.0] - 2025-01-15
+
+### Added
+
+- **Role Personas System**: Major new feature that brings specialized AI agent profiles to the Spec-Driven Development workflow
+  - **9 Predefined Personas**: Business Analyst (BA), Solution Architect (SA), Tech Lead (TL), Quality Assurance (QA), DevOps Engineer, Security Engineer, UX Designer, Frontend Developer (FE), Backend Developer (BE)
+  - **Interactive Multi-Select UI**: During `specify init`, users can select which personas to enable using arrow keys and space bar
+  - **Sub-Agent Orchestration**: Main AI agent coordinates multiple persona sub-agents working in parallel (similar to Cursor's Composer)
+  - **Phase-Specific Contributions**: Each persona contributes specialized expertise at appropriate phases:
+    - `/speckit.specify`: BA, SA, Security, UX, QA contribute to requirements and constraints
+    - `/speckit.plan`: SA, TL, DevOps, Security, UX, FE, BE contribute to architecture and planning
+    - `/speckit.tasks`: TL, QA, FE, BE, DevOps contribute to task breakdown
+    - `/speckit.implement`: TL, QA, DevOps, Security, UX, FE, BE contribute to implementation and validation
+    - `/speckit.clarify`: All personas contribute to clarifying ambiguities in their domains
+    - `/speckit.analyze`: All personas contribute to analyzing artifacts for consistency and quality
+    - `/speckit.checklist`: All personas contribute to generating quality validation checklists
+    - `/speckit.constitution`: All personas contribute governance principles in their domains
+  - **Persona Configuration**: Selected personas stored in `.specify/config.json` with orchestration settings
+  - **Persona Files**: Comprehensive persona definitions copied to `memory/personas/` directory
+  - **Customization Support**: Users can edit existing personas or create custom ones
+  - **Default Selection**: Core trio (BA, SA, TL) selected by default for all projects
+  - **Parallel Execution**: Configurable parallel persona execution with concurrency limits
+  - **Backward Compatibility**: Persona system is opt-in; existing projects continue to work without personas
+
+### Changed
+
+- Enhanced `specify init` command with persona selection step
+- Updated project initialization workflow to include persona setup
+- Added persona configuration and file copying to initialization tracker
+- Updated all command templates (`specify.md`, `plan.md`, `tasks.md`, `implement.md`, `clarify.md`, `analyze.md`, `checklist.md`, `constitution.md`) with persona orchestration instructions
+- Updated all artifact templates (`spec-template.md`, `plan-template.md`, `tasks-template.md`) with persona contribution markers
+
+### Documentation
+
+- Added comprehensive Role Personas section to README.md
+- Created `memory/personas/README.md` with detailed persona documentation
+- Documented persona selection, orchestration, and customization
+- Added example workflows for different project types
+- Updated AGENTS.md with persona system architecture (pending)
+
 ## [0.0.20] - 2025-10-14
 
 ### Added

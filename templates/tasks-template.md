@@ -12,6 +12,13 @@ description: "Task list template for feature implementation"
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
+<!-- Persona Contributions: This task list may include contributions from role personas -->
+<!-- Task Breakdown: TL (Tech Lead) -->
+<!-- Testing Tasks: QA (Quality Assurance) if enabled -->
+<!-- Infrastructure Tasks: DevOps if enabled -->
+<!-- UI Tasks: FE (Frontend Developer) if enabled -->
+<!-- API Tasks: BE (Backend Developer) if enabled -->
+
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
@@ -46,6 +53,8 @@ description: "Task list template for feature implementation"
 
 ## Phase 1: Setup (Shared Infrastructure)
 
+<!-- Contributed by: TL (Tech Lead), DevOps (if enabled) -->
+
 **Purpose**: Project initialization and basic structure
 
 - [ ] T001 Create project structure per implementation plan
@@ -55,6 +64,8 @@ description: "Task list template for feature implementation"
 ---
 
 ## Phase 2: Foundational (Blocking Prerequisites)
+
+<!-- Contributed by: TL (Tech Lead), BE (Backend Developer) if enabled, DevOps if enabled -->
 
 **Purpose**: Core infrastructure that MUST be complete before ANY user story can be implemented
 
@@ -75,11 +86,15 @@ Examples of foundational tasks (adjust based on your project):
 
 ## Phase 3: User Story 1 - [Title] (Priority: P1) 🎯 MVP
 
+<!-- Contributed by: TL (Tech Lead), QA if enabled, FE/BE if enabled -->
+
 **Goal**: [Brief description of what this story delivers]
 
 **Independent Test**: [How to verify this story works on its own]
 
 ### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
+
+<!-- Testing tasks contributed by: QA (Quality Assurance) -->
 
 > **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
 

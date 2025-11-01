@@ -28,6 +28,22 @@ Execution steps:
    - If JSON parsing fails, abort and instruct user to re-run `/speckit.specify` or verify feature branch environment.
    - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
+1a. **Load Persona Configuration** (if available):
+   - Check if `.specify/config.json` exists
+   - If exists, read the `personas.enabled` list
+   - Load persona definitions from `memory/personas/` for enabled personas
+   - Identify which personas contribute to the `clarify` phase:
+     - **Business Analyst (BA)**: Functional requirements clarification, user story ambiguity resolution, acceptance criteria refinement
+     - **Solution Architect (SA)**: Technical feasibility clarification, architecture constraint validation, integration point clarification
+     - **Tech Lead (TL)**: Implementation approach clarification, technical constraint validation, best practices alignment
+     - **Quality Assurance (QA)**: Test scenario clarification, edge case identification, quality criteria refinement
+     - **DevOps**: Infrastructure requirement clarification, deployment constraint validation, operational readiness
+     - **Security**: Security requirement clarification, threat model validation, compliance constraint identification
+     - **UX**: User experience clarification, accessibility requirement refinement, usability criteria validation
+     - **Frontend Developer (FE)**: Frontend requirement clarification, UI specification refinement, component design validation
+     - **Backend Developer (BE)**: Backend requirement clarification, API specification refinement, data model validation
+   - If no persona configuration exists, proceed with standard single-agent workflow
+
 2. Load the current spec file. Perform a structured ambiguity & coverage scan using this taxonomy. For each category, mark status: Clear / Partial / Missing. Produce an internal coverage map used for prioritization (do not output raw map unless no questions will be asked).
 
    Functional Scope & Behavior:
@@ -85,6 +101,78 @@ Execution steps:
    - Information is better deferred to planning phase (note internally)
 
 3. Generate (internally) a prioritized queue of candidate clarification questions (maximum 5). Do NOT output them all at once. Apply these constraints:
+
+   **Orchestrate Persona Contributions** (if personas enabled):
+   
+   If personas are enabled, coordinate their specialized question generation in parallel where possible:
+   
+   a. **Business Analyst (BA)** - Functional clarifications:
+      - Identify ambiguous functional requirements
+      - Generate questions about user story completeness
+      - Clarify acceptance criteria gaps
+      - Validate success criteria measurability
+   
+   b. **Solution Architect (SA)** - Technical clarifications:
+      - Identify technical feasibility questions
+      - Generate questions about architecture constraints
+      - Clarify integration point requirements
+      - Validate system design assumptions
+   
+   c. **Tech Lead (TL)** - Implementation clarifications:
+      - Identify implementation approach ambiguities
+      - Generate questions about technical constraints
+      - Clarify best practices alignment
+      - Validate code organization requirements
+   
+   d. **Quality Assurance (QA)** (if enabled):
+      - Identify test scenario gaps
+      - Generate questions about edge cases
+      - Clarify quality criteria
+      - Validate error handling requirements
+   
+   e. **DevOps** (if enabled):
+      - Identify infrastructure requirement gaps
+      - Generate questions about deployment constraints
+      - Clarify operational readiness criteria
+      - Validate CI/CD requirements
+   
+   f. **Security** (if enabled):
+      - Identify security requirement gaps
+      - Generate questions about threat model
+      - Clarify compliance requirements
+      - Validate authentication/authorization needs
+   
+   g. **UX** (if enabled):
+      - Identify user experience ambiguities
+      - Generate questions about accessibility requirements
+      - Clarify usability criteria
+      - Validate interaction design requirements
+   
+   h. **Frontend Developer (FE)** (if enabled):
+      - Identify frontend requirement ambiguities
+      - Generate questions about UI specifications
+      - Clarify component design requirements
+      - Validate state management needs
+   
+   i. **Backend Developer (BE)** (if enabled):
+      - Identify backend requirement ambiguities
+      - Generate questions about API specifications
+      - Clarify data model requirements
+      - Validate business logic needs
+   
+   **Orchestration Pattern**:
+   - Each persona identifies ambiguities in their domain
+   - Prioritize questions by impact across all personas
+   - Select top 5 questions with highest combined impact
+   - Ensure questions cover multiple domains when possible
+   - Resolve any duplicate or overlapping questions
+   
+   **Attribution**: Track which personas contributed to each question:
+   ```markdown
+   <!-- Question generated by: BA, SA -->
+   ```
+   
+   Continue with standard constraint application:
     - Maximum of 10 total questions across the whole session.
     - Each question must be answerable with EITHER:
        - A short multiple‑choice selection (2–5 distinct, mutually exclusive options), OR

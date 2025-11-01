@@ -36,6 +36,23 @@ Run `{SCRIPT}` once from repo root and parse JSON for FEATURE_DIR and AVAILABLE_
 Abort with an error message if any required file is missing (instruct the user to run missing prerequisite command).
 For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
+### 1a. Load Persona Configuration (if available)
+
+- Check if `.specify/config.json` exists
+- If exists, read the `personas.enabled` list
+- Load persona definitions from `memory/personas/` for enabled personas
+- Identify which personas contribute to the `analyze` phase:
+  - **Business Analyst (BA)**: Requirements completeness, user story coverage, acceptance criteria validation
+  - **Solution Architect (SA)**: Architecture consistency, technical feasibility validation, integration point verification
+  - **Tech Lead (TL)**: Implementation task coverage, code organization alignment, best practices adherence
+  - **Quality Assurance (QA)**: Test coverage validation, quality gate verification, edge case identification
+  - **DevOps**: Infrastructure task coverage, deployment readiness, operational considerations
+  - **Security**: Security requirement coverage, threat model validation, compliance verification
+  - **UX**: User experience requirement coverage, accessibility validation, usability criteria
+  - **Frontend Developer (FE)**: Frontend task coverage, UI requirement completeness, component consistency
+  - **Backend Developer (BE)**: Backend task coverage, API requirement completeness, data model consistency
+- If no persona configuration exists, proceed with standard single-agent workflow
+
 ### 2. Load Artifacts (Progressive Disclosure)
 
 Load only the minimal necessary context from each artifact:
@@ -79,6 +96,76 @@ Create internal representations (do not include raw artifacts in output):
 ### 4. Detection Passes (Token-Efficient Analysis)
 
 Focus on high-signal findings. Limit to 50 findings total; aggregate remainder in overflow summary.
+
+**Orchestrate Persona Contributions** (if personas enabled):
+
+If personas are enabled, coordinate their specialized analysis in parallel where possible:
+
+a. **Business Analyst (BA)** - Requirements analysis:
+   - Validate requirements completeness and clarity
+   - Check user story coverage and acceptance criteria quality
+   - Identify missing or ambiguous functional requirements
+   - Verify success criteria are measurable and testable
+
+b. **Solution Architect (SA)** - Architecture consistency:
+   - Validate technical architecture consistency across artifacts
+   - Check integration points are properly specified
+   - Verify technical constraints are reflected in tasks
+   - Identify architectural gaps or contradictions
+
+c. **Tech Lead (TL)** - Implementation coverage:
+   - Validate task coverage for all requirements
+   - Check code organization and structure alignment
+   - Verify best practices are reflected in tasks
+   - Identify missing implementation tasks
+
+d. **Quality Assurance (QA)** (if enabled):
+   - Validate test coverage for all requirements
+   - Check quality gates are properly defined
+   - Verify edge cases are identified and covered
+   - Identify missing test scenarios
+
+e. **DevOps** (if enabled):
+   - Validate infrastructure and deployment task coverage
+   - Check operational readiness considerations
+   - Verify CI/CD and monitoring requirements
+   - Identify missing infrastructure tasks
+
+f. **Security** (if enabled):
+   - Validate security requirement coverage
+   - Check threat model alignment
+   - Verify compliance requirements are addressed
+   - Identify security gaps or vulnerabilities
+
+g. **UX** (if enabled):
+   - Validate user experience requirement coverage
+   - Check accessibility requirements
+   - Verify usability criteria are measurable
+   - Identify UX gaps or inconsistencies
+
+h. **Frontend Developer (FE)** (if enabled):
+   - Validate frontend task coverage
+   - Check UI requirement completeness
+   - Verify component consistency
+   - Identify missing frontend implementation tasks
+
+i. **Backend Developer (BE)** (if enabled):
+   - Validate backend task coverage
+   - Check API requirement completeness
+   - Verify data model consistency
+   - Identify missing backend implementation tasks
+
+**Orchestration Pattern**:
+- All personas analyze artifacts in parallel based on their expertise
+- Each persona contributes findings in their domain
+- Integrate all findings into a unified analysis report
+- Resolve any conflicts between persona findings (prioritize by severity)
+- Ensure consistency across all analysis sections
+
+**Attribution**: Add subtle attribution markers for persona contributions in the analysis report:
+```markdown
+<!-- Analysis contributed by: BA, SA, TL, QA, DevOps, Security, UX, FE, BE -->
+```
 
 #### A. Duplication Detection
 

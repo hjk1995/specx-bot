@@ -22,7 +22,19 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Optional**: data-model.md (entities), contracts/ (API endpoints), research.md (decisions), quickstart.md (test scenarios)
    - Note: Not all projects have all documents. Generate tasks based on what's available.
 
-3. **Execute task generation workflow**:
+3. **Load Persona Configuration** (if available):
+   - Check if `.specify/config.json` exists
+   - If exists, read the `personas.enabled` list
+   - Load persona definitions from `memory/personas/` for enabled personas
+   - Identify which personas contribute to the `tasks` phase:
+     - **Tech Lead (TL)**: Task breakdown, dependency management, estimation
+     - **Quality Assurance (QA)**: Testing tasks, validation checkpoints
+     - **Frontend Developer (FE)**: UI implementation tasks
+     - **Backend Developer (BE)**: API and database tasks
+     - **DevOps Engineer**: Infrastructure and CI/CD tasks
+   - If no persona configuration exists, proceed with standard single-agent workflow
+
+4. **Execute task generation workflow**:
    - Load plan.md and extract tech stack, libraries, project structure
    - Load spec.md and extract user stories with their priorities (P1, P2, P3, etc.)
    - If data-model.md exists: Extract entities and map to user stories
@@ -33,7 +45,68 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Create parallel execution examples per user story
    - Validate task completeness (each user story has all needed tasks, independently testable)
 
-4. **Generate tasks.md**: Use `.specify/templates/tasks-template.md` as structure, fill with:
+5. **Orchestrate Persona Contributions** (if personas enabled):
+   
+   If personas are enabled, coordinate their contributions:
+   
+   a. **Tech Lead (TL)** - Lead task planner:
+      - Break down implementation plan into specific, actionable tasks
+      - Ensure tasks are small enough (2-8 hours ideally)
+      - Order tasks to respect dependencies
+      - Identify tasks that can be parallelized
+      - Provide realistic effort estimates
+      - Identify high-risk or complex tasks
+      - Plan for incremental delivery by user story
+   
+   b. **Quality Assurance (QA)** (if enabled):
+      - Create specific test implementation tasks
+      - Define unit test requirements for each component
+      - Plan integration test scenarios
+      - Design end-to-end test workflows
+      - Specify performance and load test requirements
+      - Define validation checkpoints for each phase
+      - Establish quality gates
+   
+   c. **Frontend Developer (FE)** (if enabled):
+      - Break down UI into component implementation tasks
+      - Create tasks for each page/view
+      - Define tasks for shared components
+      - Plan integration with backend APIs
+      - Create tasks for responsive design implementation
+      - Define frontend testing tasks
+   
+   d. **Backend Developer (BE)** (if enabled):
+      - Create tasks for each API endpoint
+      - Define database schema creation tasks
+      - Plan migration tasks
+      - Create business logic implementation tasks
+      - Define backend testing tasks
+      - Plan for API documentation tasks
+   
+   e. **DevOps Engineer** (if enabled):
+      - Create infrastructure provisioning tasks
+      - Define CI/CD pipeline setup tasks
+      - Plan deployment automation tasks
+      - Create monitoring setup tasks
+      - Define logging configuration tasks
+      - Plan backup and disaster recovery tasks
+   
+   **Orchestration Pattern**:
+   - TL creates the initial task breakdown based on plan
+   - QA, FE, BE, and DevOps add their specialized tasks in parallel
+   - TL reviews and integrates all tasks, ensuring proper sequencing
+   - TL identifies dependencies between tasks from different personas
+   - Ensure tasks are properly ordered (setup → tests → implementation → validation)
+   - Mark parallelizable tasks with [P] marker
+   
+   **Attribution**: Add subtle attribution markers for persona contributions:
+   ```markdown
+   <!-- Task breakdown by: TL -->
+   <!-- Testing tasks by: QA -->
+   <!-- Infrastructure tasks by: DevOps -->
+   ```
+
+6. **Generate tasks.md**: Use `.specify/templates/tasks-template.md` as structure, fill with:
    - Correct feature name from plan.md
    - Phase 1: Setup tasks (project initialization)
    - Phase 2: Foundational tasks (blocking prerequisites for all user stories)
@@ -46,7 +119,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Parallel execution examples per story
    - Implementation strategy section (MVP first, incremental delivery)
 
-5. **Report**: Output path to generated tasks.md and summary:
+7. **Report**: Output path to generated tasks.md and summary:
    - Total task count
    - Task count per user story
    - Parallel opportunities identified

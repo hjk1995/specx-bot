@@ -40,6 +40,22 @@ You **MUST** consider the user input before proceeding (if not empty).
    - All file paths must be absolute.
    - For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
+1a. **Load Persona Configuration** (if available):
+   - Check if `.specify/config.json` exists
+   - If exists, read the `personas.enabled` list
+   - Load persona definitions from `memory/personas/` for enabled personas
+   - Identify which personas contribute to the `checklist` phase:
+     - **Business Analyst (BA)**: Requirements quality validation, acceptance criteria completeness
+     - **Solution Architect (SA)**: Architecture requirement clarity, technical constraint validation
+     - **Tech Lead (TL)**: Implementation requirement completeness, best practices validation
+     - **Quality Assurance (QA)**: Test scenario coverage, quality criteria validation, edge case identification
+     - **DevOps**: Infrastructure requirement completeness, deployment criteria validation
+     - **Security**: Security requirement coverage, compliance validation, threat model completeness
+     - **UX**: User experience requirement quality, accessibility criteria validation, usability completeness
+     - **Frontend Developer (FE)**: Frontend requirement clarity, UI specification completeness
+     - **Backend Developer (BE)**: Backend requirement clarity, API specification completeness
+   - If no persona configuration exists, proceed with standard single-agent workflow
+
 2. **Clarify intent (dynamic)**: Derive up to THREE initial contextual clarifying questions (no pre-baked catalog). They MUST:
    - Be generated from the user's phrasing + extracted signals from spec/plan/tasks
    - Only ask about information that materially changes checklist content
@@ -97,6 +113,76 @@ You **MUST** consider the user input before proceeding (if not empty).
      - If file exists, append to existing file
    - Number items sequentially starting from CHK001
    - Each `/speckit.checklist` run creates a NEW file (never overwrites existing checklists)
+
+   **Orchestrate Persona Contributions** (if personas enabled):
+   
+   If personas are enabled, coordinate their specialized checklist contributions in parallel where possible:
+   
+   a. **Business Analyst (BA)** - Requirements quality checks:
+      - Generate checklist items validating functional requirements completeness
+      - Check acceptance criteria clarity and measurability
+      - Verify user story quality and consistency
+      - Validate success criteria are testable
+   
+   b. **Solution Architect (SA)** - Architecture requirement checks:
+      - Generate checklist items validating architecture requirements clarity
+      - Check technical constraints are properly specified
+      - Verify integration requirements completeness
+      - Validate system design requirements are unambiguous
+   
+   c. **Tech Lead (TL)** - Implementation requirement checks:
+      - Generate checklist items validating implementation requirements completeness
+      - Check code organization requirements clarity
+      - Verify best practices are documented
+      - Validate technical debt and refactoring considerations
+   
+   d. **Quality Assurance (QA)** (if enabled):
+      - Generate checklist items validating test scenario coverage
+      - Check quality criteria are measurable
+      - Verify edge cases are documented
+      - Validate error handling requirements completeness
+   
+   e. **DevOps** (if enabled):
+      - Generate checklist items validating infrastructure requirements
+      - Check deployment criteria completeness
+      - Verify CI/CD requirements are specified
+      - Validate monitoring and observability requirements
+   
+   f. **Security** (if enabled):
+      - Generate checklist items validating security requirements coverage
+      - Check compliance requirements completeness
+      - Verify threat model is documented
+      - Validate authentication and authorization requirements
+   
+   g. **UX** (if enabled):
+      - Generate checklist items validating UX requirements quality
+      - Check accessibility criteria completeness
+      - Verify usability requirements are measurable
+      - Validate interaction design requirements clarity
+   
+   h. **Frontend Developer (FE)** (if enabled):
+      - Generate checklist items validating frontend requirements clarity
+      - Check UI specification completeness
+      - Verify component requirements consistency
+      - Validate state management requirements
+   
+   i. **Backend Developer (BE)** (if enabled):
+      - Generate checklist items validating backend requirements clarity
+      - Check API specification completeness
+      - Verify data model requirements consistency
+      - Validate business logic requirements
+   
+   **Orchestration Pattern**:
+   - Each persona contributes checklist items in their domain of expertise
+   - Integrate all contributions into a cohesive checklist organized by quality dimensions
+   - Resolve any duplicate or overlapping checklist items
+   - Ensure consistent formatting and numbering across all items
+   - Prioritize items by risk and impact
+   
+   **Attribution**: Add subtle attribution markers for persona contributions:
+   ```markdown
+   <!-- Checklist items contributed by: BA, SA, TL, QA, DevOps, Security, UX, FE, BE -->
+   ```
 
    **CORE PRINCIPLE - Test the Requirements, Not the Implementation**:
    Every checklist item MUST evaluate the REQUIREMENTS THEMSELVES for:

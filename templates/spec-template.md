@@ -5,6 +5,10 @@
 **Status**: Draft  
 **Input**: User description: "$ARGUMENTS"
 
+<!-- Persona Contributions: This specification may include contributions from role personas -->
+<!-- Primary Contributors: BA (Business Analyst), SA (Solution Architect) -->
+<!-- Supporting Contributors: Security, UX, QA (if enabled) -->
+
 ## User Scenarios & Testing *(mandatory)*
 
 <!--
@@ -77,6 +81,9 @@
 
 ## Requirements *(mandatory)*
 
+<!-- Contributed by: BA (Business Analyst) -->
+<!-- Validated by: SA (Solution Architect) for technical feasibility -->
+
 <!--
   ACTION REQUIRED: The content in this section represents placeholders.
   Fill them out with the right functional requirements.
@@ -101,6 +108,8 @@
 - **[Entity 2]**: [What it represents, relationships to other entities]
 
 ## Success Criteria *(mandatory)*
+
+<!-- Contributed by: BA (Business Analyst) -->
 
 <!--
   ACTION REQUIRED: Define measurable success criteria.

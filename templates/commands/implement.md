@@ -17,7 +17,21 @@ You **MUST** consider the user input before proceeding (if not empty).
 
 1. Run `{SCRIPT}` from repo root and parse FEATURE_DIR and AVAILABLE_DOCS list. All paths must be absolute. For single quotes in args like "I'm Groot", use escape syntax: e.g 'I'\''m Groot' (or double-quote if possible: "I'm Groot").
 
-2. **Check checklists status** (if FEATURE_DIR/checklists/ exists):
+2. **Load Persona Configuration** (if available):
+   - Check if `.specify/config.json` exists
+   - If exists, read the `personas.enabled` list
+   - Load persona definitions from `memory/personas/` for enabled personas
+   - Identify which personas contribute to the `implement` phase:
+     - **Tech Lead (TL)**: Code review, best practices enforcement, quality gates
+     - **Quality Assurance (QA)**: Test execution, quality validation, defect identification
+     - **DevOps Engineer**: Deployment validation, monitoring setup, operational readiness
+     - **Security Engineer**: Security validation, vulnerability assessment, penetration testing
+     - **UX Designer**: UX validation, accessibility testing, usability testing
+     - **Frontend Developer (FE)**: UI implementation, frontend validation, cross-browser testing
+     - **Backend Developer (BE)**: API implementation, backend validation, performance optimization
+   - If no persona configuration exists, proceed with standard single-agent workflow
+
+3. **Check checklists status** (if FEATURE_DIR/checklists/ exists):
    - Scan all checklist files in the checklists/ directory
    - For each checklist, count:
      - Total items: All lines matching `- [ ]` or `- [X]` or `- [x]`
@@ -48,7 +62,7 @@ You **MUST** consider the user input before proceeding (if not empty).
      - Display the table showing all checklists passed
      - Automatically proceed to step 3
 
-3. Load and analyze the implementation context:
+4. Load and analyze the implementation context:
    - **REQUIRED**: Read tasks.md for the complete task list and execution plan
    - **REQUIRED**: Read plan.md for tech stack, architecture, and file structure
    - **IF EXISTS**: Read data-model.md for entities and relationships
@@ -56,7 +70,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **IF EXISTS**: Read research.md for technical decisions and constraints
    - **IF EXISTS**: Read quickstart.md for integration scenarios
 
-4. **Project Setup Verification**:
+5. **Project Setup Verification**:
    - **REQUIRED**: Create/verify ignore files based on actual project setup:
 
    **Detection & Creation Logic**:
@@ -99,27 +113,117 @@ You **MUST** consider the user input before proceeding (if not empty).
    - **Terraform**: `.terraform/`, `*.tfstate*`, `*.tfvars`, `.terraform.lock.hcl`
    - **Kubernetes/k8s**: `*.secret.yaml`, `secrets/`, `.kube/`, `kubeconfig*`, `*.key`, `*.crt`
 
-5. Parse tasks.md structure and extract:
+6. Parse tasks.md structure and extract:
    - **Task phases**: Setup, Tests, Core, Integration, Polish
    - **Task dependencies**: Sequential vs parallel execution rules
    - **Task details**: ID, description, file paths, parallel markers [P]
    - **Execution flow**: Order and dependency requirements
 
-6. Execute implementation following the task plan:
+7. **Orchestrate Persona Contributions** (if personas enabled):
+   
+   If personas are enabled, coordinate their contributions during implementation:
+   
+   a. **Tech Lead (TL)** - Implementation guide:
+      - Review code for adherence to standards and best practices
+      - Ensure code follows established patterns
+      - Verify error handling and edge cases
+      - Check for code smells and technical debt
+      - Validate test coverage and quality
+      - Enforce SOLID principles and design patterns
+      - Guide implementation decisions
+   
+   b. **Quality Assurance (QA)** (if enabled):
+      - Execute all unit tests and verify they pass
+      - Run integration tests
+      - Execute end-to-end test scenarios
+      - Perform exploratory testing
+      - Validate performance and load handling
+      - Document bugs with clear reproduction steps
+      - Verify bug fixes don't introduce regressions
+      - Check code coverage meets requirements
+   
+   c. **DevOps Engineer** (if enabled):
+      - Verify deployment pipeline works end-to-end
+      - Test rollback procedures
+      - Validate environment configurations
+      - Confirm secrets management works correctly
+      - Implement application metrics collection
+      - Configure dashboards and visualizations
+      - Set up alerting rules and notifications
+      - Verify backup and restore procedures
+   
+   d. **Security Engineer** (if enabled):
+      - Review code for security vulnerabilities
+      - Run static application security testing (SAST)
+      - Perform dynamic application security testing (DAST)
+      - Scan dependencies for known vulnerabilities
+      - Test authentication and authorization
+      - Attempt common attack vectors (SQLi, XSS, CSRF)
+      - Test for privilege escalation
+      - Verify audit logging captures security events
+   
+   e. **UX Designer** (if enabled):
+      - Verify user flows work as designed
+      - Check that interactions are intuitive
+      - Test with screen readers (NVDA, JAWS, VoiceOver)
+      - Verify keyboard navigation works completely
+      - Check color contrast ratios
+      - Validate ARIA labels and roles
+      - Conduct user testing sessions
+      - Measure time-on-task and error rates
+   
+   f. **Frontend Developer (FE)** (if enabled):
+      - Implement components according to design
+      - Ensure responsive behavior across devices
+      - Implement interactions and animations
+      - Integrate with backend APIs
+      - Handle loading and error states
+      - Test on major browsers (Chrome, Firefox, Safari, Edge)
+      - Verify on different devices and screen sizes
+      - Check for browser-specific issues
+   
+   g. **Backend Developer (BE)** (if enabled):
+      - Implement API endpoints according to contracts
+      - Implement authentication and authorization
+      - Add request validation and sanitization
+      - Implement error handling and logging
+      - Optimize database queries
+      - Implement caching strategies
+      - Add connection pooling
+      - Profile and fix bottlenecks
+   
+   **Orchestration Pattern**:
+   - TL guides the overall implementation and reviews code continuously
+   - FE and BE implement their respective tasks in parallel
+   - QA validates each completed task before marking it done
+   - DevOps validates deployment readiness throughout
+   - Security performs ongoing security validation
+   - UX validates user experience as features are completed
+   - All personas report issues to TL for coordination
+   - TL makes final decision on code quality and readiness
+   
+   **Attribution**: Add subtle attribution markers for persona contributions:
+   ```markdown
+   <!-- Implementation validated by: TL, QA -->
+   <!-- Security validated by: Security -->
+   <!-- UX validated by: UX -->
+   ```
+
+8. Execute implementation following the task plan:
    - **Phase-by-phase execution**: Complete each phase before moving to the next
    - **Respect dependencies**: Run sequential tasks in order, parallel tasks [P] can run together  
    - **Follow TDD approach**: Execute test tasks before their corresponding implementation tasks
    - **File-based coordination**: Tasks affecting the same files must run sequentially
    - **Validation checkpoints**: Verify each phase completion before proceeding
 
-7. Implementation execution rules:
+9. Implementation execution rules:
    - **Setup first**: Initialize project structure, dependencies, configuration
    - **Tests before code**: If you need to write tests for contracts, entities, and integration scenarios
    - **Core development**: Implement models, services, CLI commands, endpoints
    - **Integration work**: Database connections, middleware, logging, external services
    - **Polish and validation**: Unit tests, performance optimization, documentation
 
-8. Progress tracking and error handling:
+10. Progress tracking and error handling:
    - Report progress after each completed task
    - Halt execution if any non-parallel task fails
    - For parallel tasks [P], continue with successful tasks, report failed ones
@@ -127,7 +231,7 @@ You **MUST** consider the user input before proceeding (if not empty).
    - Suggest next steps if implementation cannot proceed
    - **IMPORTANT** For completed tasks, make sure to mark the task off as [X] in the tasks file.
 
-9. Completion validation:
+11. Completion validation:
    - Verify all required tasks are completed
    - Check that implemented features match the original specification
    - Validate that tests pass and coverage meets requirements

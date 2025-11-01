@@ -21,6 +21,7 @@
 
 - [🤔 What is Spec-Driven Development?](#-what-is-spec-driven-development)
 - [⚡ Get Started](#-get-started)
+- [👥 Role Personas](#-role-personas)
 - [📽️ Video Overview](#️-video-overview)
 - [🤖 Supported AI Agents](#-supported-ai-agents)
 - [🔧 Specify CLI Reference](#-specify-cli-reference)
@@ -125,6 +126,181 @@ Use **`/speckit.implement`** to execute all tasks and build your feature accordi
 ```
 
 For detailed step-by-step instructions, see our [comprehensive guide](./spec-driven.md).
+
+## 👥 Role Personas
+
+Spec Kit now supports **Role Personas** - specialized AI agent profiles that bring domain-specific expertise to your development workflow. During project initialization, you can select which personas to enable, and they'll contribute their specialized knowledge throughout the spec-driven development process.
+
+### What are Role Personas?
+
+Role personas are specialized AI profiles that act as virtual team members, each focusing on specific aspects of software development. When enabled, your AI agent orchestrates these personas (similar to Cursor's Composer), allowing them to contribute their expertise in parallel.
+
+### Available Personas
+
+#### Core Personas (Recommended for All Projects)
+
+| Persona | Focus | Key Contributions |
+|---------|-------|-------------------|
+| **Business Analyst (BA)** | Requirements & User Stories | User scenarios, functional requirements, acceptance criteria, success metrics |
+| **Solution Architect (SA)** | Technical Architecture | System design, technology stack selection, integration patterns, data models |
+| **Tech Lead (TL)** | Implementation Strategy | Code organization, task breakdown, development workflow, best practices |
+
+#### Specialized Personas (Add as Needed)
+
+| Persona | Focus | Key Contributions |
+|---------|-------|-------------------|
+| **Quality Assurance (QA)** | Testing & Quality | Test strategies, quality gates, validation criteria, bug prevention |
+| **DevOps Engineer** | Infrastructure & Deployment | CI/CD pipelines, monitoring, infrastructure design, operational excellence |
+| **Security Engineer** | Security & Compliance | Threat modeling, security controls, compliance requirements, vulnerability assessment |
+| **UX Designer** | User Experience | Usability, accessibility, interaction design, user research |
+| **Frontend Developer (FE)** | UI Implementation | Component design, state management, responsive design, frontend architecture |
+| **Backend Developer (BE)** | API & Data | API design, database design, business logic, backend architecture |
+
+### How Personas Work
+
+#### 1. Selection During Initialization
+
+When running `specify init`, you'll be prompted to select personas using an interactive multi-select interface:
+
+```bash
+specify init my-project
+```
+
+Use arrow keys to navigate, space bar to toggle selection, and Enter to confirm. Selected personas are:
+
+- Copied to your project's `memory/personas/` directory
+- Stored in `.specify/config.json` for reference by commands
+- Activated for all subsequent spec commands
+
+#### 2. Persona Contributions by Phase
+
+Different personas contribute at different stages of development:
+
+**During `/speckit.specify` (Specification)**:
+
+- **BA**: Creates user stories, functional requirements, acceptance criteria
+- **SA**: Validates technical feasibility, identifies system constraints
+- **Security**: Identifies security and compliance requirements
+- **UX**: Defines user experience and accessibility requirements
+- **QA**: Creates test scenarios and quality criteria
+
+**During `/speckit.plan` (Planning)**:
+
+- **SA**: Designs architecture, selects technology stack, creates data models and API contracts
+- **TL**: Defines implementation strategy, code organization, development workflow
+- **DevOps**: Plans infrastructure, deployment strategy, monitoring and logging
+- **Security**: Designs security architecture, authentication/authorization patterns
+- **UX**: Defines interaction design, UI patterns, responsive design approach
+- **FE**: Plans frontend architecture, component design, state management
+- **BE**: Plans backend architecture, API design, database schema
+
+**During `/speckit.tasks` (Task Breakdown)**:
+
+- **TL**: Breaks down implementation into tasks, manages dependencies, estimates effort
+- **QA**: Creates testing tasks and validation checkpoints
+- **FE**: Defines UI implementation tasks
+- **BE**: Defines API and database implementation tasks
+- **DevOps**: Creates infrastructure and CI/CD setup tasks
+
+**During `/speckit.implement` (Implementation)**:
+
+- **TL**: Reviews code quality, enforces best practices, guides implementation
+- **QA**: Validates quality gates, runs tests, identifies defects
+- **DevOps**: Validates deployment readiness, sets up monitoring
+- **Security**: Performs security validation and vulnerability assessment
+- **UX**: Validates user experience and accessibility compliance
+- **FE**: Implements and validates UI components
+- **BE**: Implements and validates backend logic and APIs
+
+**During `/speckit.clarify` (Clarification)**:
+
+- **BA**: Clarifies functional requirements, resolves user story ambiguities, refines acceptance criteria
+- **SA**: Clarifies technical feasibility, validates architecture constraints, resolves integration points
+- **TL**: Clarifies implementation approach, validates technical constraints, ensures best practices alignment
+- **QA**: Clarifies test scenarios, identifies edge cases, refines quality criteria
+- **DevOps**: Clarifies infrastructure requirements, validates deployment constraints, ensures operational readiness
+- **Security**: Clarifies security requirements, validates threat model, identifies compliance constraints
+- **UX**: Clarifies user experience requirements, refines accessibility criteria, validates usability
+- **FE**: Clarifies frontend requirements, refines UI specifications, validates component design
+- **BE**: Clarifies backend requirements, refines API specifications, validates data model
+
+**During `/speckit.analyze` (Analysis)**:
+
+- **BA**: Validates requirements completeness, checks user story coverage, validates acceptance criteria
+- **SA**: Validates architecture consistency, checks technical feasibility, verifies integration points
+- **TL**: Validates implementation task coverage, checks code organization alignment, ensures best practices
+- **QA**: Validates test coverage, verifies quality gates, identifies edge cases
+- **DevOps**: Validates infrastructure task coverage, checks deployment readiness, reviews operational considerations
+- **Security**: Validates security requirement coverage, verifies threat model, checks compliance
+- **UX**: Validates user experience requirement coverage, checks accessibility, reviews usability criteria
+- **FE**: Validates frontend task coverage, checks UI requirement completeness, verifies component consistency
+- **BE**: Validates backend task coverage, checks API requirement completeness, verifies data model consistency
+
+**During `/speckit.checklist` (Checklist Generation)**:
+
+- **BA**: Generates requirements quality validation items, checks acceptance criteria completeness
+- **SA**: Generates architecture requirement clarity items, validates technical constraints
+- **TL**: Generates implementation requirement completeness items, validates best practices
+- **QA**: Generates test scenario coverage items, validates quality criteria, identifies edge cases
+- **DevOps**: Generates infrastructure requirement completeness items, validates deployment criteria
+- **Security**: Generates security requirement coverage items, validates compliance, checks threat model completeness
+- **UX**: Generates user experience requirement quality items, validates accessibility criteria, checks usability completeness
+- **FE**: Generates frontend requirement clarity items, checks UI specification completeness
+- **BE**: Generates backend requirement clarity items, checks API specification completeness
+
+**During `/speckit.constitution` (Constitution Management)**:
+
+- **BA**: Contributes requirements governance principles, acceptance criteria standards, user story guidelines
+- **SA**: Contributes architecture governance principles, technical standards, integration guidelines
+- **TL**: Contributes code quality principles, best practices standards, implementation guidelines
+- **QA**: Contributes testing standards, quality gate principles, validation guidelines
+- **DevOps**: Contributes infrastructure governance, deployment standards, operational principles
+- **Security**: Contributes security governance principles, compliance standards, threat modeling guidelines
+- **UX**: Contributes user experience principles, accessibility standards, usability guidelines
+- **FE**: Contributes frontend standards, UI consistency principles, component guidelines
+- **BE**: Contributes backend standards, API governance principles, data integrity guidelines
+
+#### 3. Sub-Agent Orchestration
+
+When personas are enabled, your main AI agent acts as an orchestrator:
+
+1. **Parallel Execution**: Independent personas work simultaneously on their contributions
+2. **Context Sharing**: Personas have access to relevant project artifacts and specifications
+3. **Contribution Merging**: The orchestrator integrates persona outputs into cohesive artifacts
+4. **Conflict Resolution**: The orchestrator resolves any conflicting recommendations
+
+### Customizing Personas
+
+You can customize personas for your specific project needs:
+
+1. **Edit Existing Personas**: Modify files in `memory/personas/` to add project-specific guidelines
+2. **Create Custom Personas**: Add new persona definition files following the standard format
+3. **Disable Personas**: Update `.specify/config.json` to temporarily disable personas
+4. **Adjust Orchestration**: Configure parallel execution and concurrency limits in config
+
+### Example Workflows
+
+**E-commerce Project**:
+
+- Select: BA, SA, TL, QA, Security, FE, BE
+- BA defines checkout user stories
+- Security identifies PCI-DSS requirements
+- SA designs payment processing architecture
+- FE plans shopping cart UI
+- BE designs payment API
+- TL breaks down into tasks
+- QA creates payment flow tests
+
+**Internal Dashboard**:
+
+- Select: BA, SA, TL, UX, FE
+- BA defines reporting requirements
+- UX designs dashboard layout
+- SA plans data aggregation
+- FE designs chart components
+- TL creates implementation tasks
+
+For more details, see the [Role Personas Documentation](memory/personas/README.md).
 
 ## 📽️ Video Overview
 

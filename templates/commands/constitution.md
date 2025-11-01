@@ -20,6 +20,22 @@ Follow this execution flow:
    - Identify every placeholder token of the form `[ALL_CAPS_IDENTIFIER]`.
    **IMPORTANT**: The user might require less or more principles than the ones used in the template. If a number is specified, respect that - follow the general template. You will update the doc accordingly.
 
+1a. **Load Persona Configuration** (if available):
+   - Check if `.specify/config.json` exists
+   - If exists, read the `personas.enabled` list
+   - Load persona definitions from `memory/personas/` for enabled personas
+   - Identify which personas contribute to the `constitution` phase:
+     - **Business Analyst (BA)**: Requirements governance principles, acceptance criteria standards, user story quality guidelines
+     - **Solution Architect (SA)**: Architecture governance principles, technical standards, integration guidelines
+     - **Tech Lead (TL)**: Code quality principles, best practices standards, implementation guidelines
+     - **Quality Assurance (QA)**: Testing standards, quality gate principles, validation guidelines
+     - **DevOps**: Infrastructure governance, deployment standards, operational principles
+     - **Security**: Security governance principles, compliance standards, threat modeling guidelines
+     - **UX**: User experience principles, accessibility standards, usability guidelines
+     - **Frontend Developer (FE)**: Frontend standards, UI consistency principles, component guidelines
+     - **Backend Developer (BE)**: Backend standards, API governance principles, data integrity guidelines
+   - If no persona configuration exists, proceed with standard single-agent workflow
+
 2. Collect/derive values for placeholders:
    - If user input (conversation) supplies a value, use it.
    - Otherwise infer from existing repo context (README, docs, prior constitution versions if embedded).
@@ -35,6 +51,76 @@ Follow this execution flow:
    - Preserve heading hierarchy and comments can be removed once replaced unless they still add clarifying guidance.
    - Ensure each Principle section: succinct name line, paragraph (or bullet list) capturing non‑negotiable rules, explicit rationale if not obvious.
    - Ensure Governance section lists amendment procedure, versioning policy, and compliance review expectations.
+
+   **Orchestrate Persona Contributions** (if personas enabled):
+   
+   If personas are enabled, coordinate their specialized principle contributions in parallel where possible:
+   
+   a. **Business Analyst (BA)** - Requirements governance:
+      - Contribute principles for requirements quality and completeness
+      - Define acceptance criteria standards
+      - Establish user story quality guidelines
+      - Specify success criteria measurability requirements
+   
+   b. **Solution Architect (SA)** - Architecture governance:
+      - Contribute principles for architecture consistency and quality
+      - Define technical standards and constraints
+      - Establish integration guidelines
+      - Specify system design principles
+   
+   c. **Tech Lead (TL)** - Code quality governance:
+      - Contribute principles for code quality and maintainability
+      - Define best practices standards
+      - Establish implementation guidelines
+      - Specify technical debt management principles
+   
+   d. **Quality Assurance (QA)** (if enabled):
+      - Contribute principles for testing and quality assurance
+      - Define quality gate standards
+      - Establish validation guidelines
+      - Specify test coverage requirements
+   
+   e. **DevOps** (if enabled):
+      - Contribute principles for infrastructure and deployment
+      - Define deployment standards
+      - Establish operational principles
+      - Specify CI/CD and monitoring requirements
+   
+   f. **Security** (if enabled):
+      - Contribute principles for security and compliance
+      - Define security standards
+      - Establish threat modeling guidelines
+      - Specify compliance requirements
+   
+   g. **UX** (if enabled):
+      - Contribute principles for user experience
+      - Define accessibility standards
+      - Establish usability guidelines
+      - Specify interaction design principles
+   
+   h. **Frontend Developer (FE)** (if enabled):
+      - Contribute principles for frontend development
+      - Define UI consistency standards
+      - Establish component guidelines
+      - Specify state management principles
+   
+   i. **Backend Developer (BE)** (if enabled):
+      - Contribute principles for backend development
+      - Define API governance standards
+      - Establish data integrity guidelines
+      - Specify business logic principles
+   
+   **Orchestration Pattern**:
+   - Each persona contributes principles in their domain of expertise
+   - Integrate all contributions into a cohesive constitution
+   - Resolve any conflicts between persona principles (prioritize by project needs)
+   - Ensure consistency across all principle sections
+   - Validate that principles are testable and enforceable
+   
+   **Attribution**: Add subtle attribution markers for persona contributions:
+   ```markdown
+   <!-- Constitution principles contributed by: BA, SA, TL, QA, DevOps, Security, UX, FE, BE -->
+   ```
 
 4. Consistency propagation checklist (convert prior checklist into active validations):
    - Read `/templates/plan-template.md` and ensure any "Constitution Check" or rules align with updated principles.

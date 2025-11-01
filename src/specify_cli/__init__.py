@@ -154,6 +154,55 @@ AGENT_CONFIG = {
 
 SCRIPT_TYPE_CHOICES = {"sh": "POSIX Shell (bash/zsh)", "ps": "PowerShell"}
 
+# Persona configuration
+PERSONA_CONFIG = {
+    "business-analyst": {
+        "name": "Business Analyst (BA)",
+        "description": "Requirements gathering, user stories, acceptance criteria",
+        "default": True,
+    },
+    "solution-architect": {
+        "name": "Solution Architect (SA)",
+        "description": "Technical architecture, system design, integration patterns",
+        "default": True,
+    },
+    "tech-lead": {
+        "name": "Tech Lead (TL)",
+        "description": "Implementation strategy, code structure, best practices",
+        "default": True,
+    },
+    "quality-assurance": {
+        "name": "Quality Assurance (QA)",
+        "description": "Test strategies, quality gates, validation criteria",
+        "default": False,
+    },
+    "devops": {
+        "name": "DevOps Engineer",
+        "description": "Infrastructure, deployment, CI/CD, monitoring",
+        "default": False,
+    },
+    "security": {
+        "name": "Security Engineer",
+        "description": "Security requirements, threat modeling, compliance",
+        "default": False,
+    },
+    "ux": {
+        "name": "UX Designer",
+        "description": "User experience, accessibility, usability",
+        "default": False,
+    },
+    "frontend-developer": {
+        "name": "Frontend Developer (FE)",
+        "description": "UI implementation, component design, state management",
+        "default": False,
+    },
+    "backend-developer": {
+        "name": "Backend Developer (BE)",
+        "description": "API design, database design, business logic",
+        "default": False,
+    },
+}
+
 CLAUDE_LOCAL_PATH = Path.home() / ".claude" / "local" / "claude"
 
 BANNER = """
@@ -346,7 +395,155 @@ def select_with_arrows(options: dict, prompt_text: str = "Select an option", def
 
     return selected_key
 
+def multi_select_with_arrows(options: dict, prompt_text: str = "Select options", defaults: list = None) -> list:
+    """
+    Interactive multi-selection using arrow keys and space bar with Rich Live display.
+    
+    Args:
+        options: Dict with keys as option keys and values as descriptions
+        prompt_text: Text to show above the options
+        defaults: List of default selected option keys
+        
+    Returns:
+        List of selected option keys
+    """
+    option_keys = list(options.keys())
+    selected_index = 0
+    selected_items = set(defaults if defaults else [])
+    confirmed = False
+
+    def create_selection_panel():
+        """Create the selection panel with current selection highlighted."""
+        table = Table.grid(padding=(0, 2))
+        table.add_column(style="cyan", justify="left", width=3)
+        table.add_column(style="cyan", justify="left", width=3)
+        table.add_column(style="white", justify="left")
+
+        for i, key in enumerate(option_keys):
+            cursor = "▶" if i == selected_index else " "
+            checkbox = "[X]" if key in selected_items else "[ ]"
+            name = options[key]
+            
+            if i == selected_index:
+                table.add_row(cursor, f"[cyan]{checkbox}[/cyan]", f"[cyan]{name}[/cyan]")
+            else:
+                table.add_row(cursor, f"[dim]{checkbox}[/dim]", f"[dim]{name}[/dim]")
+
+        table.add_row("", "", "")
+        table.add_row("", "", "[dim]↑/↓: Navigate | Space: Toggle | Enter: Confirm | Esc: Cancel[/dim]")
+
+        selected_count = len(selected_items)
+        subtitle = f"[dim]{selected_count} persona{'s' if selected_count != 1 else ''} selected[/dim]"
+
+        return Panel(
+            table,
+            title=f"[bold]{prompt_text}[/bold]",
+            subtitle=subtitle,
+            border_style="cyan",
+            padding=(1, 2)
+        )
+
+    console.print()
+
+    def run_selection_loop():
+        nonlocal selected_index, selected_items, confirmed
+        with Live(create_selection_panel(), console=console, transient=True, auto_refresh=False) as live:
+            while True:
+                try:
+                    key = get_key()
+                    if key == 'up':
+                        selected_index = (selected_index - 1) % len(option_keys)
+                    elif key == 'down':
+                        selected_index = (selected_index + 1) % len(option_keys)
+                    elif key == ' ':  # Space bar to toggle
+                        current_key = option_keys[selected_index]
+                        if current_key in selected_items:
+                            selected_items.remove(current_key)
+                        else:
+                            selected_items.add(current_key)
+                    elif key == 'enter':
+                        confirmed = True
+                        break
+                    elif key == 'escape':
+                        console.print("\n[yellow]Selection cancelled[/yellow]")
+                        raise typer.Exit(1)
+
+                    live.update(create_selection_panel(), refresh=True)
+
+                except KeyboardInterrupt:
+                    console.print("\n[yellow]Selection cancelled[/yellow]")
+                    raise typer.Exit(1)
+
+    run_selection_loop()
+
+    if not confirmed:
+        console.print("\n[red]Selection failed.[/red]")
+        raise typer.Exit(1)
+
+    return list(selected_items)
+
 console = Console()
+
+def create_persona_config(project_path: Path, selected_personas: list) -> None:
+    """
+    Create persona configuration file in .specify directory.
+    
+    Args:
+        project_path: Path to the project root
+        selected_personas: List of selected persona IDs
+    """
+    specify_dir = project_path / ".specify"
+    specify_dir.mkdir(parents=True, exist_ok=True)
+    
+    config_file = specify_dir / "config.json"
+    
+    config = {
+        "version": "1.0",
+        "personas": {
+            "enabled": selected_personas,
+            "available": list(PERSONA_CONFIG.keys())
+        },
+        "orchestration": {
+            "parallel_execution": True,
+            "max_concurrent_personas": 3
+        }
+    }
+    
+    with open(config_file, 'w', encoding='utf-8') as f:
+        json.dump(config, f, indent=2)
+        f.write('\n')
+
+def copy_persona_files(project_path: Path, selected_personas: list, template_source: Path = None) -> None:
+    """
+    Copy selected persona definition files to project.
+    
+    Args:
+        project_path: Path to the project root
+        selected_personas: List of selected persona IDs
+        template_source: Path to template personas directory (defaults to package templates)
+    """
+    # Determine source directory
+    if template_source is None:
+        # Use package templates directory
+        template_source = Path(__file__).parent.parent.parent / "templates" / "personas"
+    
+    # Create destination directory
+    personas_dir = project_path / "memory" / "personas"
+    personas_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Copy selected persona files
+    for persona_id in selected_personas:
+        source_file = template_source / f"{persona_id}.md"
+        dest_file = personas_dir / f"{persona_id}.md"
+        
+        if source_file.exists():
+            shutil.copy2(source_file, dest_file)
+    
+    # Copy README if it exists
+    readme_source = template_source.parent.parent / "memory" / "personas" / "README.md"
+    readme_dest = personas_dir / "README.md"
+    if readme_source.exists():
+        shutil.copy2(readme_source, readme_dest)
 
 class BannerGroup(TyperGroup):
     """Custom group that shows banner before help."""
@@ -1011,6 +1208,23 @@ def init(
     console.print(f"[cyan]Selected AI assistant:[/cyan] {selected_ai}")
     console.print(f"[cyan]Selected script type:[/cyan] {selected_script}")
 
+    # Persona selection
+    persona_options = {key: f"{config['name']} - {config['description']}" 
+                      for key, config in PERSONA_CONFIG.items()}
+    default_personas = [key for key, config in PERSONA_CONFIG.items() if config.get('default', False)]
+    
+    if sys.stdin.isatty():
+        selected_personas = multi_select_with_arrows(
+            persona_options,
+            "Select role personas for your project:",
+            defaults=default_personas
+        )
+    else:
+        # Non-interactive mode: use defaults
+        selected_personas = default_personas
+    
+    console.print(f"[cyan]Selected personas:[/cyan] {', '.join([PERSONA_CONFIG[p]['name'] for p in selected_personas])}")
+
     tracker = StepTracker("Initialize Specify Project")
 
     sys._specify_tracker_active = True
@@ -1021,6 +1235,8 @@ def init(
     tracker.complete("ai-select", f"{selected_ai}")
     tracker.add("script-select", "Select script type")
     tracker.complete("script-select", selected_script)
+    tracker.add("persona-select", "Select role personas")
+    tracker.complete("persona-select", f"{len(selected_personas)} selected")
     for key, label in [
         ("fetch", "Fetch latest release"),
         ("download", "Download template"),
@@ -1028,6 +1244,7 @@ def init(
         ("zip-list", "Archive contents"),
         ("extracted-summary", "Extraction summary"),
         ("chmod", "Ensure scripts executable"),
+        ("personas", "Setup role personas"),
         ("cleanup", "Cleanup"),
         ("git", "Initialize git repository"),
         ("final", "Finalize")
@@ -1047,6 +1264,15 @@ def init(
             download_and_extract_template(project_path, selected_ai, selected_script, here, verbose=False, tracker=tracker, client=local_client, debug=debug, github_token=github_token)
 
             ensure_executable_scripts(project_path, tracker=tracker)
+
+            # Setup personas
+            tracker.start("personas")
+            try:
+                copy_persona_files(project_path, selected_personas)
+                create_persona_config(project_path, selected_personas)
+                tracker.complete("personas", f"{len(selected_personas)} personas configured")
+            except Exception as e:
+                tracker.error("personas", f"setup failed: {str(e)}")
 
             if not no_git:
                 tracker.start("git")
